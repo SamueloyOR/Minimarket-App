@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:minimarket_app/Screens/auth/login_user_screen.dart';
+import 'package:minimarket_app/Screens/auth/create_user_screen.dart';
 import '../app_colors.dart';
 
 //Creacion de un statelessweidget de la pantalla de inicio
@@ -76,8 +78,8 @@ class HomeScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      width: 300,
-                      height: 300,
+                      width: 320,
+                      height: 200,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
@@ -90,7 +92,11 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
               ]),
+
+              //se crea division entre widgets
               const SizedBox(height: 20),
+
+              //Se crea widget Descripcion de la aplicacion, y parrafo del proyecto
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
@@ -116,6 +122,8 @@ class HomeScreen extends StatelessWidget {
                       )],
                     ),
                     SizedBox(height: 30),
+
+                //widget para registrarse al precionar el boton
                 Column(
                   spacing: 10,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -134,7 +142,11 @@ class HomeScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10),
                             ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CreateUserScreen()));
+                        },
                         label: const Text(
                           'Empezar a comprar',
                           style: TextStyle(
@@ -146,6 +158,8 @@ class HomeScreen extends StatelessWidget {
                     ],
                 ),
                 const SizedBox(height: 20,),
+
+                //Widget botton para iniciar sesion
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -168,7 +182,12 @@ class HomeScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginUserScreen()),
+                          );
+                        },
                         label: Text('Ya tengo una cuenta • Iniciar Sesion',
                         style: TextStyle(
                           fontSize: 15,
@@ -205,5 +224,6 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
+    
   }
 }
