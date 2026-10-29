@@ -1,6 +1,8 @@
-# minimarket_app
+# Minimarket Colombia
 
-A new Flutter project.
+![alt text](image.png)
+
+Minimarket Colombia 
 
 ## Getting Started
 
