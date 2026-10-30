@@ -3,10 +3,6 @@
 ![alt text](image.png)
 
 
-<h2 aling="center">
-Minimaret Colombia
-<h2>
-
 <p align="left">
 <img src="https://img.shields.io/badge/STATUS-EN%20DESAROLLO-green">
 </p>
