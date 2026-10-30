@@ -7,6 +7,9 @@
 ## Minimarket Colombia
 
 ![Badge en Desarollo](https://img.shields.io/badge/STATUS-EN%20DESA)
+<p align="left">
+<img src="https://img.shields.io/badge/STATUS-EN%20DESAROLLO-green">
+</p>
 
 Encontraras lo indeispensanble pàra tu hogar desde tu comodidad de tu casa
 
