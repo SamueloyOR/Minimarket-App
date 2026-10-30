@@ -7,7 +7,7 @@
 <img src="https://img.shields.io/badge/STATUS-EN%20DESAROLLO-green">
 </p>
 
-Encontraras lo indeispensanble pàra tu hogar desde tu comodidad de tu casa
+Encontraras lo indispensable para tu hogar desde tu comodidad de tu casa
 
 A few resources to get you started if this is your first Flutter project:
 

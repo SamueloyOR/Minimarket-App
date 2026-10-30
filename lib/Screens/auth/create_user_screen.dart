@@ -11,13 +11,20 @@ class CreateUserScreen extends StatefulWidget {
 class _CreateUserScreenState extends State<CreateUserScreen> {
   String? _selectedProfile;
 
+  final List<bool> _isSelected = [true, false];
+
   @override
   Widget build(BuildContext context) {
+    final isLoginMode = _isSelected[0];
+    final actionLabel = _selectedProfile == null
+        ? 'Selecciona un perfil'
+        : '${isLoginMode ? 'Iniciar sesión' : 'Crear cuenta'} como $_selectedProfile';
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text(
-          'Role Selection',
+          'Elige tu perfil',
           style: TextStyle(letterSpacing: -1.2, fontWeight: FontWeight.bold),
         ),
         backgroundColor: AppColors.cardBg,
@@ -42,7 +49,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
           ),
         ],
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,30 +79,106 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
             const SizedBox(height: 20),
             _profileOption(
               profile: 'Cliente',
-              profileDescription: "Usuario",
-              description: 'Explora Ofertas relampago, productos frescos de granja y ratrea tus pedidos.',
+              profileDescription: 'Usuario',
+              description: 'Explora ofertas relámpago, productos frescos y rastrea tus pedidos.',
               icon: Icons.shopping_basket_outlined,
-              footerbar: "Entrega en promedio",
+              footerbar: 'Ofertas y pedidos',
               iconFooter: Icons.flash_on_outlined,
             ),
             const SizedBox(height: 12),
             _profileOption(
               profile: 'Trabajador',
-              profileDescription: 'Logica y Bodega',
-              description: 'Gestiona ordenes por armar, escaneo de SKU ne bodega y rutas en entrada activas.',
+              profileDescription: 'Logística y bodega',
+              description: 'Gestiona pedidos, escanea productos en bodega y consulta las rutas activas.',
               icon: Icons.storefront_outlined,
-              footerbar: "Herramientas a tu disposicion",
-              iconFooter: Icons.qr_code_outlined
+              footerbar: 'Operación y logística',
+              iconFooter: Icons.qr_code_outlined,
             ),
             const SizedBox(height: 12),
             _profileOption(
-              profile: "Admin",
-              profileDescription: "Administra productos y BI",
-              description: "Metricas de ventas, inventario en tiempo real, gestion de personal y consfiguracon.",
+              profile: 'Admin',
+              profileDescription: 'Administración',
+              description: 'Consulta métricas de ventas e inventario, y gestiona productos y personal.',
               icon: Icons.shield_outlined,
-              footerbar: 'Requiere Autenticacion',
-              iconFooter: Icons.shield_sharp
-            )
+              footerbar: 'Acceso sujeto a autorización',
+              iconFooter: Icons.shield_sharp,
+            ),
+
+            const SizedBox(height: 20),
+
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: AppColors.inputBg,
+                  borderRadius: BorderRadius.circular(50),
+              ),
+              child: ToggleButtons(
+                isSelected: _isSelected,
+                onPressed: (index) {
+                  setState(() {
+                    for (int i = 0; i < _isSelected.length; i++) {
+                      _isSelected[i] = i == index;
+                    }
+                  });
+                },
+                borderRadius: BorderRadius.circular(50),
+                renderBorder: false,
+                selectedColor: AppColors.textPrimary,
+                fillColor: AppColors.primary,
+                color: AppColors.textMuted,
+                textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    child: Text('Iniciar sesión'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    child: Text('Registrarme'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+            const SizedBox(height: 20),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.arrow_forward),
+                iconAlignment: IconAlignment.end,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.textPrimary,
+                  disabledBackgroundColor: AppColors.border,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: _selectedProfile == null
+                    ? null
+                    : () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('$actionLabel todavía no está conectado.'),
+                          ),
+                        );
+                      },
+                label: Text(
+                  actionLabel,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -108,19 +191,19 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
     required String description,
     required IconData icon,
     required IconData iconFooter,
-    required String footerbar
+    required String footerbar,
   }) {
     final isSelected = _selectedProfile == profile;
     final cardShape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
       side: BorderSide(
         color: isSelected ? AppColors.primaryLight : AppColors.border,
-        width: isSelected ? 1 : 1,
+        width: isSelected ? 1.5 : 1,
       ),
     );
 
     return Card(
-      color: isSelected ? AppColors.inputBg : AppColors.inputBg,
+      color: AppColors.inputBg,
       elevation: isSelected ? 5 : 1,
       shadowColor: AppColors.shadow,
       margin: EdgeInsets.zero,
@@ -157,11 +240,17 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.background : AppColors.background,
+                      color: AppColors.background,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: AppColors.border),
                     ),
-                    child: Icon(icon, size: 22, color: isSelected ? AppColors.primaryLight : AppColors.textMuted ),
+                    child: Icon(
+                      icon,
+                      size: 22,
+                      color: isSelected
+                          ? AppColors.primaryLight
+                          : AppColors.textMuted,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -180,9 +269,11 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                         Text(
                           profileDescription,
                           style: TextStyle(
-                            color: isSelected ? AppColors.primaryLight : AppColors.textMuted,
+                            color: isSelected
+                                ? AppColors.primaryLight
+                                : AppColors.textMuted,
                             fontSize: 14,
-                            fontWeight: FontWeight.bold
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -199,7 +290,9 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                             Icon(
                               iconFooter,
                               size: 14,
-                              color: isSelected ? AppColors.primaryLight : AppColors.textMuted,
+                              color: isSelected
+                                  ? AppColors.primaryLight
+                                  : AppColors.textMuted,
                             ),
                             const SizedBox(width: 6),
                             Expanded(
@@ -212,8 +305,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                               ),
                             ),
                           ],
-                        )
-
+                        ),
                       ],
                     ),
                   ),
