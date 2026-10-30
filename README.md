@@ -2,11 +2,13 @@
 
 ![alt text](image.png)
 
-Minimarket Colombia 
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+## Minimarket Colombia
+
+![Badge en Desarollo](https://img.shields.io/badge/STATUS-EN%20DESA)
+
+Encontraras lo indeispensanble pàra tu hogar desde tu comodidad de tu casa
 
 A few resources to get you started if this is your first Flutter project:
 
