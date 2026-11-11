@@ -1,6 +1,6 @@
 # Minimarket Colombia
 
-![alt text](image.png)
+![alt text](assets/images/minimarket.jpeg)
 
 
 <p align="left">

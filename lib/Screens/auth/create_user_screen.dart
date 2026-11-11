@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:minimarket_app/app_colors.dart';
+import 'package:minimarket_app/Screens/auth/login_user_screen.dart';
 
 class CreateUserScreen extends StatefulWidget {
   const CreateUserScreen({super.key});
@@ -11,14 +12,158 @@ class CreateUserScreen extends StatefulWidget {
 class _CreateUserScreenState extends State<CreateUserScreen> {
   String? _selectedProfile;
 
-  final List<bool> _isSelected = [true, false];
+  bool _isLoginMode = true;
+  final _registrationFormKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void _continue() {
+    final profile = _selectedProfile;
+    if (profile == null) return;
+
+    if (_isLoginMode) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginUserScreen(selectedProfile: profile),
+        ),
+      );
+      return;
+    }
+
+    if (!(_registrationFormKey.currentState?.validate() ?? false)) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Formulario válido. Para crear y guardar la cuenta, primero hay que conectar un backend.',
+        ),
+      ),
+    );
+  }
+
+  Widget _registrationForm() {
+    return Form(
+      key: _registrationFormKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextFormField(
+            controller: _nameController,
+            textCapitalization: TextCapitalization.words,
+            decoration: _registrationDecoration(
+              label: 'Nombre completo',
+              icon: Icons.person_outline,
+            ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Ingresa tu nombre';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            decoration: _registrationDecoration(
+              label: 'Correo electrónico',
+              icon: Icons.email_outlined,
+            ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Ingresa tu correo electrónico';
+              }
+              if (!RegExp(r'^[\w.+-]+@([\w-]+\.)+[\w-]{2,}$')
+                  .hasMatch(value.trim())) {
+                return 'Ingresa un correo válido';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _passwordController,
+            obscureText: true,
+            decoration: _registrationDecoration(
+              label: 'Contraseña',
+              icon: Icons.lock_outline,
+            ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Ingresa una contraseña';
+              }
+              if (value.length < 6) {
+                return 'Usa al menos 6 caracteres';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _confirmPasswordController,
+            obscureText: true,
+            decoration: _registrationDecoration(
+              label: 'Confirmar contraseña',
+              icon: Icons.lock_reset_outlined,
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Confirma tu contraseña';
+              }
+              if (value != _passwordController.text) {
+                return 'Las contraseñas no coinciden';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Este formulario es una demostración: los datos no se guardan todavía.',
+            style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+
+  InputDecoration _registrationDecoration({
+    required String label,
+    required IconData icon,
+  }) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: AppColors.textMuted),
+      prefixIcon: Icon(icon, color: AppColors.textMuted),
+      filled: true,
+      fillColor: AppColors.cardBg,
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: AppColors.border),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: AppColors.primary),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isLoginMode = _isSelected[0];
     final actionLabel = _selectedProfile == null
         ? 'Selecciona un perfil'
-        : '${isLoginMode ? 'Iniciar sesión' : 'Crear cuenta'} como $_selectedProfile';
+        : '${_isLoginMode ? 'Iniciar sesión' : 'Crear cuenta'} como $_selectedProfile';
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -114,12 +259,10 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                   borderRadius: BorderRadius.circular(50),
               ),
               child: ToggleButtons(
-                isSelected: _isSelected,
+                isSelected: [_isLoginMode, !_isLoginMode],
                 onPressed: (index) {
                   setState(() {
-                    for (int i = 0; i < _isSelected.length; i++) {
-                      _isSelected[i] = i == index;
-                    }
+                    _isLoginMode = index == 0;
                   });
                 },
                 borderRadius: BorderRadius.circular(50),
@@ -142,6 +285,11 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
             ),
           ),
 
+            if (!_isLoginMode) ...[
+              const SizedBox(height: 16),
+              _registrationForm(),
+            ],
+
             const SizedBox(height: 20),
 
             SizedBox(
@@ -161,15 +309,7 @@ class _CreateUserScreenState extends State<CreateUserScreen> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: _selectedProfile == null
-                    ? null
-                    : () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('$actionLabel todavía no está conectado.'),
-                          ),
-                        );
-                      },
+                onPressed: _selectedProfile == null ? null : _continue,
                 label: Text(
                   actionLabel,
                   style: const TextStyle(

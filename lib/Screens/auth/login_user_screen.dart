@@ -3,12 +3,14 @@ import 'package:minimarket_app/app_colors.dart';
 
 import 'create_user_screen.dart';
 
-import 'package:minimarket_app/dashboard/admin_screen.dart';
-import 'package:minimarket_app/dashboard/worker_screen.dart';
-import 'package:minimarket_app/dashboard/client_screen.dart';
+import 'package:minimarket_app/Screens/dashboard/admin_screen.dart';
+import 'package:minimarket_app/Screens/dashboard/worker_screen.dart';
+import 'package:minimarket_app/Screens/dashboard/client_screen.dart';
 
 class LoginUserScreen extends StatefulWidget {
-  const LoginUserScreen({super.key});
+  const LoginUserScreen({super.key, this.selectedProfile});
+
+  final String? selectedProfile;
 
   @override
   State<LoginUserScreen> createState() => _LoginUserScreenState();
@@ -16,6 +18,13 @@ class LoginUserScreen extends StatefulWidget {
 
 //crear formularios y validacion de entradas
 class _LoginUserScreenState extends State<LoginUserScreen> {
+  static const _demoPassword = '391221';
+  static const _demoProfilesByEmail = <String, String>{
+    'admin@gmail.com': 'Admin',
+    'worker@gmail.com': 'Trabajador',
+    'client@gmail.com': 'Cliente',
+  };
+
   final _formkey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
@@ -32,46 +41,34 @@ class _LoginUserScreenState extends State<LoginUserScreen> {
     if (_formkey.currentState?.validate() ?? false) {
       final email = _emailController.text.trim();
       final password = _passwordController.text;
+      final profile = _demoProfilesByEmail[email];
 
-      if (email == 'admin@gmail.com' && password == '391221') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const AdminScreen()),
-        );
-      } else {
+      if (profile == null ||
+          password != _demoPassword ||
+          (widget.selectedProfile != null &&
+              widget.selectedProfile != profile)) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Correo o contraseña incorrectos'),
             backgroundColor: Colors.red,
           ),
         );
+        return;
       }
-      if (email == 'worker@gmail.com' && password == '391221') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const WorkerScreen()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Correo o contraseña incorrectos'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-      if (email == 'client@gmail.com' && password == '391221') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ClientScreen()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Correo o contraseña incorrectos'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+
+      final destination = switch (profile) {
+        'Admin' => const AdminScreen(),
+        'Trabajador' => const WorkerScreen(),
+        'Cliente' => const ClientScreen(),
+        _ => throw StateError(
+          'No hay una ruta configurada para el perfil $profile',
+        ),
+      };
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => destination),
+      );
     }
   }
 
@@ -81,7 +78,7 @@ class _LoginUserScreenState extends State<LoginUserScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text(
-          'Login',
+          'Iniciar sesión',
           style: TextStyle(letterSpacing: -1.2, fontWeight: FontWeight.bold),
         ),
         backgroundColor: AppColors.cardBg,
